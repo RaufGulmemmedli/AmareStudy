@@ -1,12 +1,15 @@
-name: Deploy Web
+name: Deploy Web (Develop)
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - develop   # develop-a push olanda avtomatik
+  workflow_dispatch: # manual düymə
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
@@ -14,12 +17,13 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT }}
+          port: 22
           script: |
             set -e
             cd /opt/amarestudy/web
-            git fetch --all
-            git reset --hard origin/main
-            docker compose build --no-cache
+            git fetch origin
+            git checkout develop
+            git reset --hard origin/develop
+            docker compose build
             docker compose up -d
             docker image prune -f
