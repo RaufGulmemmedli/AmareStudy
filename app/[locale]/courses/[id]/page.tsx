@@ -7,70 +7,10 @@ import {
   BookOpen, Star, Users, Clock, ChevronRight, BarChart,
   Award, Globe, Play, CheckCircle, ChevronDown, ChevronUp, Quote,
 } from "lucide-react";
-import {
-  Breadcrumb, BreadcrumbItem, BreadcrumbLink,
-  BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-
-/* ------------------------------------------------------------------ */
-/*  Static Data                                                        */
-/* ------------------------------------------------------------------ */
-
-const courses = [
-  { id: 1, title: "Web Development", titleAz: "Veb Inkishaf", titleRu: "Veb-razrabotka", category: "IT", price: 299, rating: 4.8, students: 450, duration: "12 hefte", level: "intermediate", image: "/placeholder.svg" },
-  { id: 2, title: "UI/UX Design", titleAz: "UI/UX Dizayn", titleRu: "UI/UX Dizayn", category: "Design", price: 249, rating: 4.9, students: 380, duration: "10 hefte", level: "beginner", image: "/placeholder.svg" },
-  { id: 3, title: "Digital Marketing", titleAz: "Reqemsal Marketinq", titleRu: "Tsifrovoy marketing", category: "Business", price: 199, rating: 4.7, students: 520, duration: "8 hefte", level: "beginner", image: "/placeholder.svg" },
-  { id: 4, title: "Data Science", titleAz: "Data Elmi", titleRu: "Nauka o dannykh", category: "IT", price: 349, rating: 4.8, students: 310, duration: "16 hefte", level: "advanced", image: "/placeholder.svg" },
-  { id: 5, title: "English Language", titleAz: "Ingilis Dili", titleRu: "Angliyskiy yazyk", category: "Language", price: 149, rating: 4.6, students: 680, duration: "24 hefte", level: "beginner", image: "/placeholder.svg" },
-  { id: 6, title: "Project Management", titleAz: "Layihe Idareetmesi", titleRu: "Upravleniye proyektami", category: "Business", price: 279, rating: 4.7, students: 290, duration: "10 hefte", level: "intermediate", image: "/placeholder.svg" },
-  { id: 7, title: "Python Programming", titleAz: "Python Proqramlasdirma", titleRu: "Programmirovaniye Python", category: "IT", price: 199, rating: 4.9, students: 560, duration: "14 hefte", level: "beginner", image: "/placeholder.svg" },
-  { id: 8, title: "Graphic Design", titleAz: "Qrafik Dizayn", titleRu: "Graficheskiy dizayn", category: "Design", price: 229, rating: 4.5, students: 340, duration: "10 hefte", level: "intermediate", image: "/placeholder.svg" },
-  { id: 9, title: "Russian Language", titleAz: "Rus Dili", titleRu: "Russkiy yazyk", category: "Language", price: 129, rating: 4.4, students: 220, duration: "20 hefte", level: "beginner", image: "/placeholder.svg" },
-  { id: 10, title: "Cyber Security", titleAz: "Kiber Tehlukesizlik", titleRu: "Kiberbezopasnost", category: "IT", price: 399, rating: 4.8, students: 180, duration: "16 hefte", level: "advanced", image: "/placeholder.svg" },
-  { id: 11, title: "Business Analytics", titleAz: "Biznes Analitika", titleRu: "Biznes-analitika", category: "Business", price: 259, rating: 4.6, students: 310, duration: "12 hefte", level: "intermediate", image: "/placeholder.svg" },
-  { id: 12, title: "Mobile App Development", titleAz: "Mobil Tetbiq Inkishafi", titleRu: "Mobilnaya razrabotka", category: "IT", price: 329, rating: 4.7, students: 290, duration: "14 hefte", level: "intermediate", image: "/placeholder.svg" },
-];
-
-const staticReviews = [
-  { id: 1, name: "Aysel M.", rating: 5, comment: "This course changed my life! The content is high quality and the instructor is very professional.", date: "2025-12-15" },
-  { id: 2, name: "Orxan H.", rating: 4, comment: "After completing this course, finding a new job became much easier. Highly recommended!", date: "2025-11-28" },
-  { id: 3, name: "Leyla A.", rating: 5, comment: "Excellently organized course. The practical exercises are very valuable and effective.", date: "2025-10-10" },
-];
-
-/* ------------------------------------------------------------------ */
-/*  Helpers                                                            */
-/* ------------------------------------------------------------------ */
-
-function getCourseTitle(
-  course: (typeof courses)[number],
-  locale: string
-): string {
-  if (locale === "az") return course.titleAz;
-  if (locale === "ru") return course.titleRu;
-  return course.title;
-}
-
-function RatingStars({ rating, size = "sm" }: { rating: number; size?: "sm" | "md" }) {
-  const starSize = size === "md" ? "h-5 w-5" : "h-3.5 w-3.5";
-  const textSize = size === "md" ? "text-base" : "text-sm";
-  return (
-    <div className="flex items-center gap-0.5">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <Star
-          key={i}
-          className={`${starSize} ${
-            i < Math.floor(rating)
-              ? "fill-gold-500 text-gold-500"
-              : "fill-gray-200 text-gray-200"
-          }`}
-        />
-      ))}
-      <span className={`ml-1.5 ${textSize} font-medium text-gray-600`}>
-        {rating}
-      </span>
-    </div>
-  );
-}
+import { allCourses, staticReviews } from "@/data/courses";
+import { getCourseTitle } from "@/lib/helpers";
+import { RatingStars } from "@/components/shared/rating-stars";
+import { HeroBanner } from "@/components/shared/hero-banner";
 
 function InteractiveStars({
   value,
@@ -117,7 +57,7 @@ export default function CourseDetailPage({
   const locale = useLocale();
 
   const courseId = Number(params.id);
-  const course = courses.find((c) => c.id === courseId) || courses[0];
+  const course = allCourses.find((c) => c.id === courseId) || allCourses[0];
   const courseTitle = getCourseTitle(course, locale);
 
   const [openModule, setOpenModule] = useState<number | null>(0);
@@ -162,49 +102,28 @@ export default function CourseDetailPage({
     "Motivation and willingness to learn",
   ];
 
-  const relatedCourses = courses
+  const relatedCourses = allCourses
     .filter((c) => c.category === course.category && c.id !== course.id)
     .slice(0, 3);
 
   return (
     <main className="min-h-screen">
       {/* 1. PAGE HERO */}
-      <section className="relative min-h-[280px] md:min-h-[340px] flex flex-col justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-purple-800 to-purple-700" />
-        <div className="absolute inset-0 bg-purple-900/60" />
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-20 -right-20 w-72 h-72 bg-gold-500/10 rounded-full blur-3xl" />
-          <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-purple-400/10 rounded-full blur-3xl" />
+      <HeroBanner
+        title={courseTitle}
+        breadcrumbs={[
+          { label: t("nav.home"), href: "/" },
+          { label: t("nav.courses"), href: "/courses" },
+          { label: courseTitle },
+        ]}
+      >
+        <div className="flex flex-wrap items-center gap-4 text-purple-100/90 mt-4">
+          <span className="flex items-center gap-1.5"><Star className="h-4 w-4 fill-gold-400 text-gold-400" />{course.rating}</span>
+          <span className="flex items-center gap-1.5"><Users className="h-4 w-4" />{course.students} {t("courses.students")}</span>
+          <span className="flex items-center gap-1.5"><Clock className="h-4 w-4" />{course.duration}</span>
+          <span className="px-3 py-1 text-xs font-semibold rounded-full bg-white/15 border border-white/20">{course.category}</span>
         </div>
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <Breadcrumb className="mb-6">
-            <BreadcrumbList className="text-purple-200/90 [&>li]:text-purple-200/90">
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href="/" className="hover:text-white transition-colors">{t("nav.home")}</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="text-purple-300/70"><ChevronRight className="h-4 w-4" /></BreadcrumbSeparator>
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href="/courses" className="hover:text-white transition-colors">{t("nav.courses")}</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="text-purple-300/70"><ChevronRight className="h-4 w-4" /></BreadcrumbSeparator>
-              <BreadcrumbItem>
-                <BreadcrumbPage className="text-white font-medium">{courseTitle}</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-          <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-3 tracking-tight">{courseTitle}</h1>
-          <div className="flex flex-wrap items-center gap-4 text-purple-100/90">
-            <span className="flex items-center gap-1.5"><Star className="h-4 w-4 fill-gold-400 text-gold-400" />{course.rating}</span>
-            <span className="flex items-center gap-1.5"><Users className="h-4 w-4" />{course.students} {t("courses.students")}</span>
-            <span className="flex items-center gap-1.5"><Clock className="h-4 w-4" />{course.duration}</span>
-            <span className="px-3 py-1 text-xs font-semibold rounded-full bg-white/15 border border-white/20">{course.category}</span>
-          </div>
-        </div>
-      </section>
+      </HeroBanner>
 
       {/* 2. MAIN CONTENT - Two Columns */}
       <section className="py-12 md:py-20 bg-gray-50/50">
