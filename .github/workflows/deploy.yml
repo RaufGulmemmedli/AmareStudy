@@ -3,8 +3,8 @@ name: Deploy Web (Develop)
 on:
   push:
     branches:
-      - develop   # develop-a push olanda avtomatik
-  workflow_dispatch: # manual düymə
+      - develop
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -21,9 +21,6 @@ jobs:
           script: |
             set -e
             cd /opt/amarestudy/web
-            git fetch origin
-            git checkout develop
-            git reset --hard origin/develop
             docker compose build
             docker compose up -d
             docker image prune -f
